@@ -1,35 +1,27 @@
 import { PrismaClient } from "@prisma/client";
-import cors from "cors";
-import express, { Request, Response } from "express";
+import { Request, Response, Router } from "express";
 import {
   createTaskRequestModel,
   CreateTaskRequest,
   updateTaskRequestModel,
   UpdateTaskRequest,
-} from "./models/task.model";
-import { validateRequest } from "./models/request-validation";
+} from "../models/task.model";
+import { validateRequest } from "../models/request-validation";
 
 export type TaskDatabase = Pick<PrismaClient, "task">;
 
-export function createApp(prisma: TaskDatabase) {
-  const app = express();
+export function createTasksRouter(prisma: TaskDatabase) {
+  const router = Router();
 
-  app.use(cors());
-  app.use(express.json());
-
-  app.get("/health", (_req: Request, res: Response) => {
-    res.status(200).json({ status: "ok" });
-  });
-
-  app.get("/tasks", async (_req: Request, res: Response) => {
+  router.get("/", async (_req: Request, res: Response) => {
     const tasks = await prisma.task.findMany({
       orderBy: { createdAt: "desc" },
     });
     res.json(tasks);
   });
 
-  app.post(
-    "/tasks",
+  router.post(
+    "/",
     validateRequest(createTaskRequestModel),
     async (_req: Request, res: Response) => {
       const request = res.locals.requestModel as CreateTaskRequest;
@@ -38,11 +30,12 @@ export function createApp(prisma: TaskDatabase) {
     },
   );
 
-  app.patch(
-    "/tasks/:id",
+  router.patch(
+    "/:id",
     validateRequest(updateTaskRequestModel),
     async (_req: Request, res: Response) => {
       const request = res.locals.requestModel as UpdateTaskRequest;
+
       try {
         const task = await prisma.task.update({
           where: { id: request.id },
@@ -55,5 +48,5 @@ export function createApp(prisma: TaskDatabase) {
     },
   );
 
-  return app;
+  return router;
 }
