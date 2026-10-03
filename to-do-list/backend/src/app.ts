@@ -11,6 +11,10 @@ export function createApp(prisma: TaskDatabase) {
   app.use(cors());
   app.use(express.json());
 
+  app.get("/health", (_req: Request, res: Response) => {
+    res.status(200).json({ status: "ok" });
+  });
+
   app.get("/tasks", async (_req: Request, res: Response) => {
     const tasks = await prisma.task.findMany({
       orderBy: { createdAt: "desc" },
