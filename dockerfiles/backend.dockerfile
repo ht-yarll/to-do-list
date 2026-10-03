@@ -10,7 +10,9 @@ COPY package.json package-lock.json ./
 COPY to-do-list/backend/package.json ./to-do-list/backend/package.json
 COPY to-do-list/frontend/package.json ./to-do-list/frontend/package.json
 
-RUN npm ci
+# Do not run npm lifecycle scripts in the image. This prevents the root
+# `prepare` script from installing Lefthook hooks during the Docker build.
+RUN npm ci --ignore-scripts
 
 COPY to-do-list/backend ./to-do-list/backend
 
