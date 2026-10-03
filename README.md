@@ -6,3 +6,11 @@ frontend: Typescript and React
 ## Structure
 
 Monorepo holding both back and frontend as workspaces.
+
+## Technical Information
+
+**Docker**:
+
+- image-size:
+- time to build:
+- time to build with cache:
