@@ -68,3 +68,5 @@ jobs:
 
       - name: Scan repository for leaked secrets
         uses: gitleaks/gitleaks-action@v2
+        env:
+          GITHUB_TOKEN: ${{ secrets.LEAK_SCAN }}
