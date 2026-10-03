@@ -6,7 +6,7 @@ COPY package.json package-lock.json ./
 COPY to-do-list/backend/package.json ./to-do-list/backend/package.json
 COPY to-do-list/frontend/package.json ./to-do-list/frontend/package.json
 
-RUN npm ci
+RUN npm ci --ignore-scripts
 
 COPY to-do-list/frontend ./to-do-list/frontend
 
