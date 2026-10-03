@@ -1,0 +1,21 @@
+{
+  "name": "to-do-list",
+  "version": "1.0.0",
+  "description": "",
+  "main": "index.js",
+  "private": true,
+  "workspaces": [
+    "to-do-list/backend",
+    "to-do-list/frontend"
+  ],
+  "scripts": {
+    "backend:dev": "npm run dev --workspace backend",
+    "backend:build": "npm run build --workspace backend",
+    "backend:start": "npm run start --workspace backend",
+    "test": "npm test --workspaces"
+  },
+  "keywords": [],
+  "author": "Humphry Torres",
+  "license": "ISC",
+  "type": "commonjs"
+}

@@ -1,0 +1,71 @@
+# Dependencies
+**/node_modules/
+
+# Build output
+**/dist/
+*.tsbuildinfo
+
+# Environment and secrets
+.env
+.env.*
+!.env.example
+
+# Test and coverage output
+coverage/
+.nyc_output/
+test-results/
+
+# Logs and runtime files
+*.log
+*.pid
+*.pid.lock
+
+# Prisma local databases and generated artifacts
+*.db
+*.db-journal
+*.sqlite
+*.sqlite3
+
+# Editor and operating-system files
+.DS_Store
+Thumbs.db
+.idea/
+.vscode/
+*.swp
+*.swo
+
+# Temporary files
+tmp/
+temp/
+
+# Caches
+.cache/
+**/.cache/
+*.cache
+.eslintcache
+.stylelintcache
+.sass-cache/
+.parcel-cache/
+.next/cache/
+.nuxt/
+.vite/
+.turbo/
+.webpack-cache/
+.yarn/cache/
+.npm/
+
+# Python caches and tooling state
+__pycache__/
+**/__pycache__/
+*.py[cod]
+*$py.class
+.pytest_cache/
+.mypy_cache/
+.pyright/
+.ruff_cache/
+.tox/
+.nox/
+.hypothesis/
+.ipynb_checkpoints/
+pip-wheel-metadata/
+*.egg-info/
