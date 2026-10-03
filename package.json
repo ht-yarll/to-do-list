@@ -12,10 +12,33 @@
     "backend:dev": "npm run dev --workspace backend",
     "backend:build": "npm run build --workspace backend",
     "backend:start": "npm run start --workspace backend",
-    "test": "npm test --workspaces"
+    "test": "npm test --workspaces",
+    "gitleaks": "npm gitleaks detect -v",
+    "lint": "eslint --ignore-pattern .gitignore \"{src,tests}/**/*.+(ts|js|tsx)\"",
+    "typecheck": "tsc -p to-do-list/backend/tsconfig.json --noEmit && tsc -p to-do-list/frontend/tsconfig.json --noEmit",
+    "format": "prettier --ignore-pattern .prettierignore --write \"**/*.+(js|ts|json|tsx|mdx)\" --log-level silent",
+    "prepare": "lefthook install"
   },
   "keywords": [],
   "author": "Humphry Torres",
   "license": "ISC",
-  "type": "commonjs"
+  "type": "commonjs",
+  "dependencies": {
+    "gitleaks": "^1.0.0"
+  },
+  "devDependencies": {
+    "@commitlint/cli": "^21.2.3",
+    "@commitlint/config-conventional": "^21.2.3",
+    "eslint": "^9.39.5",
+    "eslint-plugin-react": "^7.37.5",
+    "globals": "^17.13.0",
+    "lefthook": "^2.1.16",
+    "prettier": "3.9.9",
+    "typescript-eslint": "^8.71.0",
+    "validate-branch-name": "^1.3.2"
+  },
+  "validate-branch-name": {
+    "pattern": "^(feat|fix|hotfix|release|test|experimental)/.+$",
+    "errorMsg": "Branch name validation failed"
+  }
 }
