@@ -1,8 +1,7 @@
 import type { Request } from "express";
 
 export type ValidationResult<T> =
-  | { valid: true; value: T }
-  | { valid: false; error: string };
+  { valid: true; value: T } | { valid: false; error: string };
 
 export interface CreateTaskRequest {
   title: string;

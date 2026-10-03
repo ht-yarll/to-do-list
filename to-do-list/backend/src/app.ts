@@ -1,15 +1,8 @@
-import { PrismaClient } from "@prisma/client";
 import cors from "cors";
 import express, { Request, Response } from "express";
-import {
-  createTaskRequestModel,
-  CreateTaskRequest,
-  updateTaskRequestModel,
-  UpdateTaskRequest,
-} from "./models/task.model";
-import { validateRequest } from "./models/request-validation";
+import { createTasksRouter, TaskDatabase } from "./routes/tasks.routes";
 
-export type TaskDatabase = Pick<PrismaClient, "task">;
+export type { TaskDatabase } from "./routes/tasks.routes";
 
 export function createApp(prisma: TaskDatabase) {
   const app = express();
@@ -21,39 +14,7 @@ export function createApp(prisma: TaskDatabase) {
     res.status(200).json({ status: "ok" });
   });
 
-  app.get("/tasks", async (_req: Request, res: Response) => {
-    const tasks = await prisma.task.findMany({
-      orderBy: { createdAt: "desc" },
-    });
-    res.json(tasks);
-  });
-
-  app.post(
-    "/tasks",
-    validateRequest(createTaskRequestModel),
-    async (_req: Request, res: Response) => {
-      const request = res.locals.requestModel as CreateTaskRequest;
-      const task = await prisma.task.create({ data: request });
-      res.status(201).json(task);
-    },
-  );
-
-  app.patch(
-    "/tasks/:id",
-    validateRequest(updateTaskRequestModel),
-    async (_req: Request, res: Response) => {
-      const request = res.locals.requestModel as UpdateTaskRequest;
-      try {
-        const task = await prisma.task.update({
-          where: { id: request.id },
-          data: { done: request.done },
-        });
-        res.json(task);
-      } catch {
-        res.status(404).json({ error: "Task not found" });
-      }
-    },
-  );
+  app.use("/tasks", createTasksRouter(prisma));
 
   return app;
 }

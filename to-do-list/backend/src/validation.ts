@@ -7,7 +7,9 @@ import {
 
 export type { ValidationResult } from "./models/task.model";
 
-export function validateCreateTask(input: unknown): ValidationResult<{ title: string }> {
+export function validateCreateTask(
+  input: unknown,
+): ValidationResult<{ title: string }> {
   return createTaskRequestModel({ body: input });
 }
 

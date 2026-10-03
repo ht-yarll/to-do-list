@@ -1,9 +1,7 @@
 import { NextFunction, Request, RequestHandler, Response } from "express";
 import { ValidationResult } from "./task.model";
 
-export type RequestModel<T> = (
-  request: Request,
-) => ValidationResult<T>;
+export type RequestModel<T> = (request: Request) => ValidationResult<T>;
 
 export function validateRequest<T>(model: RequestModel<T>): RequestHandler {
   return (request: Request, response: Response, next: NextFunction) => {
