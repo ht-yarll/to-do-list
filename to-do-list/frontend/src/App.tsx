@@ -8,6 +8,24 @@ type Task = {
 };
 
 const API_URL = import.meta.env.VITE_API_URL ?? "http://localhost:3000";
+const THEME_STORAGE_KEY = "task-board-theme";
+
+type Theme = "light" | "dark";
+
+function getStoredTheme(): Theme | null {
+  try {
+    const savedTheme = window.localStorage.getItem(THEME_STORAGE_KEY);
+    return savedTheme === "light" || savedTheme === "dark" ? savedTheme : null;
+  } catch {
+    return null;
+  }
+}
+
+function getSystemTheme(): Theme {
+  return window.matchMedia("(prefers-color-scheme: dark)").matches
+    ? "dark"
+    : "light";
+}
 
 async function readError(response: Response) {
   const body = await response.json().catch(() => ({}));
@@ -15,6 +33,9 @@ async function readError(response: Response) {
 }
 
 function App() {
+  const [theme, setTheme] = useState<Theme>(
+    () => getStoredTheme() ?? getSystemTheme(),
+  );
   const [tasks, setTasks] = useState<Task[]>([]);
   const [title, setTitle] = useState("");
   const [loading, setLoading] = useState(true);
@@ -96,10 +117,49 @@ function App() {
 
   const completedCount = tasks.filter((task) => task.done).length;
 
+  useEffect(() => {
+    document.documentElement.dataset.theme = theme;
+  }, [theme]);
+
+  useEffect(() => {
+    if (getStoredTheme()) return;
+
+    const mediaQuery = window.matchMedia("(prefers-color-scheme: dark)");
+    const handleSystemThemeChange = (event: MediaQueryListEvent) => {
+      setTheme(event.matches ? "dark" : "light");
+    };
+
+    mediaQuery.addEventListener("change", handleSystemThemeChange);
+    return () =>
+      mediaQuery.removeEventListener("change", handleSystemThemeChange);
+  }, [theme]);
+
+  function toggleTheme() {
+    const nextTheme = theme === "light" ? "dark" : "light";
+    setTheme(nextTheme);
+    try {
+      window.localStorage.setItem(THEME_STORAGE_KEY, nextTheme);
+    } catch {
+      // Continue to apply the theme for this session if storage is unavailable.
+    }
+  }
+
   return (
     <main className="page-shell">
       <section className="task-card" aria-labelledby="page-title">
-        <div className="eyebrow">PERSONAL TASK BOARD</div>
+        <div className="top-row">
+          <div className="eyebrow">PERSONAL TASK BOARD</div>
+          <button
+            className="theme-toggle"
+            type="button"
+            onClick={toggleTheme}
+            aria-label={`Switch to ${theme === "light" ? "dark" : "light"} mode`}
+            aria-pressed={theme === "dark"}
+            title={`Switch to ${theme === "light" ? "dark" : "light"} mode`}
+          >
+            <span aria-hidden="true">{theme === "light" ? "☾" : "☀"}</span>
+          </button>
+        </div>
         <div className="heading-row">
           <div>
             <h1 id="page-title">Make space for what matters.</h1>
