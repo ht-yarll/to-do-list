@@ -20,5 +20,9 @@ WORKDIR /app/to-do-list/backend
 RUN npx prisma generate --schema src/prisma/schema.prisma
 RUN npm run build
 
+# The application only needs read access to its build and dependencies at
+# runtime. Keep the runtime process away from root privileges.
+USER node
+
 EXPOSE 3000
 CMD ["sh", "-c", "npx prisma db push --schema src/prisma/schema.prisma && npm run start"]
