@@ -12,9 +12,9 @@
     "backend:dev": "npm run dev --workspace backend",
     "backend:build": "npm run build --workspace backend",
     "backend:start": "npm run start --workspace backend",
-    "test": "npm test --workspaces",
-    "gitleaks": "npm gitleaks detect -v",
-    "lint": "eslint --ignore-pattern .gitignore \"{src,tests}/**/*.+(ts|js|tsx)\"",
+    "test": "npm run test --workspace backend",
+    "gitleaks": "if command -v gitleaks >/dev/null 2>&1; then gitleaks detect --redact --verbose; else docker run --rm -v \"$PWD:/repo\" zricethezav/gitleaks:v8.24.2 detect --source=/repo --no-git --redact --verbose; fi",
+    "lint": "eslint --ignore-pattern .gitignore \"{to-do-list,tests}/**/*.+(ts|js|tsx)\"",
     "typecheck": "tsc -p to-do-list/backend/tsconfig.json --noEmit && tsc -p to-do-list/frontend/tsconfig.json --noEmit",
     "format": "prettier --ignore-pattern .prettierignore --write \"**/*.+(js|ts|json|tsx|mdx)\" --log-level silent",
     "prepare": "lefthook install"

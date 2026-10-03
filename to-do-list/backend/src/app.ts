@@ -41,7 +41,7 @@ export function createApp(prisma: TaskDatabase) {
         data: { done: result.value.done },
       });
       res.json(task);
-    } catch (_error) {
+    } catch {
       res.status(404).json({ error: "Task not found" });
     }
   });
