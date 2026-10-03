@@ -30,6 +30,7 @@ RUN apt-get update \
   && rm -rf /var/lib/apt/lists/*
 
 COPY --from=build /app/node_modules ./node_modules
+COPY --from=build /app/to-do-list/backend/node_modules ./to-do-list/backend/node_modules
 COPY --from=build /app/to-do-list/backend/package.json ./to-do-list/backend/package.json
 COPY --from=build /app/to-do-list/backend/dist ./to-do-list/backend/dist
 
