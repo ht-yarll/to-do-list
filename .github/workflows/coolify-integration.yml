@@ -1,0 +1,63 @@
+name: Coolify integration
+
+# Template workflow. Coolify checks out the configured Git branch and builds
+# docker-compose.yml on the Coolify server. Configure COOLIFY_WEBHOOK_URL and,
+# if required by the selected Coolify endpoint, COOLIFY_TOKEN.
+
+on:
+  pull_request:
+    types:
+      - closed
+    branches:
+      - main
+
+permissions:
+  contents: read
+  checks: read
+  pull-requests: read
+
+jobs:
+  deploy:
+    name: Trigger Coolify deployment
+    if: github.event.pull_request.merged == true
+    runs-on: ubuntu-latest
+    environment: production
+    steps:
+      - name: Verify quality gate for the merged commit
+        env:
+          GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+          REPOSITORY: ${{ github.repository }}
+          HEAD_SHA: ${{ github.event.pull_request.head.sha }}
+        run: |
+          successful_runs="$(gh api \
+            "repos/$REPOSITORY/actions/workflows/quality-gate.yml/runs?event=pull_request&per_page=100" \
+            --jq "[.workflow_runs[] | select(.head_sha == \"$HEAD_SHA\") | select(.conclusion == \"success\")] | length")"
+
+          if [ "$successful_runs" -lt 1 ]; then
+            echo "No successful Quality gate run found for $HEAD_SHA" >&2
+            exit 1
+          fi
+
+          echo "Quality gate passed for $HEAD_SHA"
+
+      - name: Trigger Coolify webhook
+        env:
+          COOLIFY_WEBHOOK_URL: ${{ secrets.COOLIFY_WEBHOOK_URL }}
+          COOLIFY_TOKEN: ${{ secrets.COOLIFY_TOKEN }}
+          MERGE_SHA: ${{ github.event.pull_request.merge_commit_sha }}
+        run: |
+          test -n "$COOLIFY_WEBHOOK_URL" || {
+            echo "COOLIFY_WEBHOOK_URL is not configured" >&2
+            exit 1
+          }
+
+          headers=(-H "Content-Type: application/json")
+          if [ -n "$COOLIFY_TOKEN" ]; then
+            headers+=(-H "Authorization: Bearer $COOLIFY_TOKEN")
+          fi
+
+          curl --fail-with-body --silent --show-error \
+            --request POST \
+            "${headers[@]}" \
+            --data "{\"commit_sha\":\"$MERGE_SHA\"}" \
+            "$COOLIFY_WEBHOOK_URL"

@@ -41,16 +41,18 @@ the self-hosted GitHub Actions runner:
 Configure these three checks as required status checks in the `main` branch
 protection rules. A pull request can merge only after all required checks pass.
 
-The [CI/CD workflow](.github/workflows/ci-cd.yml) also builds the backend,
-frontend, and database images and publishes immutable GitHub Container Registry
-tags in the form `sha-<commit SHA>`. The `main` branch additionally receives a
-`latest` tag. The commit tag is the rollback-safe image reference.
+The [Quality gate workflow](.github/workflows/quality-gate.yml) runs linting,
+typechecking, tests, and secret scanning.
+It does not build or publish Docker images.
 
 The [Coolify integration workflow](.github/workflows/coolify-integration.yml)
-is a deployment template. Configure the `COOLIFY_WEBHOOK_URL` secret and,
-when required by the selected webhook, `COOLIFY_TOKEN`. It deploys the exact
-commit image tag after a successful `main` workflow and supports manually
-selecting an older `sha-<commit SHA>` tag for rollback.
+is a deployment template. It runs only when a pull request is merged into
+`main`, and verifies that the exact pull-request commit passed the Quality gate
+before notifying Coolify. Configure the `COOLIFY_WEBHOOK_URL` secret and, when
+required by the selected webhook, `COOLIFY_TOKEN`. Coolify should be configured
+with this repository, the `main` branch, and `docker-compose.yml`; it then
+checks out the source and builds the images on the Coolify server. Rollbacks
+should use the previous successful deployment/commit in Coolify's history.
 
 ## Container build metrics
 
