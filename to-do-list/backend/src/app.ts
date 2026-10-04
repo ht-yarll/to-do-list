@@ -10,8 +10,13 @@ export function createApp(prisma: TaskDatabase) {
   app.use(cors());
   app.use(express.json());
 
-  app.get("/health", (_req: Request, res: Response) => {
-    res.status(200).json({ status: "ok" });
+  app.get("/health", async (_req: Request, res: Response) => {
+    try {
+      await prisma.$queryRaw`SELECT 1`;
+      res.status(200).json({ status: "ok" });
+    } catch {
+      res.status(503).json({ status: "unhealthy" });
+    }
   });
 
   app.use("/tasks", createTasksRouter(prisma));
