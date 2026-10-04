@@ -11,6 +11,7 @@ const task = {
 
 function createDatabaseMock() {
   return {
+    $queryRaw: vi.fn(),
     task: {
       findMany: vi.fn(),
       create: vi.fn(),
@@ -24,6 +25,25 @@ describe("task HTTP API", () => {
 
   beforeEach(() => {
     database = createDatabaseMock();
+  });
+
+  it("reports healthy when the database is reachable", async () => {
+    vi.mocked(database.$queryRaw).mockResolvedValue([]);
+
+    const response = await request(createApp(database)).get("/health");
+
+    expect(response.status).toBe(200);
+    expect(response.body).toEqual({ status: "ok" });
+    expect(database.$queryRaw).toHaveBeenCalled();
+  });
+
+  it("reports unhealthy when the database is unreachable", async () => {
+    vi.mocked(database.$queryRaw).mockRejectedValue(new Error("database down"));
+
+    const response = await request(createApp(database)).get("/health");
+
+    expect(response.status).toBe(503);
+    expect(response.body).toEqual({ status: "unhealthy" });
   });
 
   it("lists tasks newest first", async () => {
