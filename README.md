@@ -41,6 +41,17 @@ the self-hosted GitHub Actions runner:
 Configure these three checks as required status checks in the `main` branch
 protection rules. A pull request can merge only after all required checks pass.
 
+The [CI/CD workflow](.github/workflows/ci-cd.yml) also builds the backend,
+frontend, and database images and publishes immutable GitHub Container Registry
+tags in the form `sha-<commit SHA>`. The `main` branch additionally receives a
+`latest` tag. The commit tag is the rollback-safe image reference.
+
+The [Coolify integration workflow](.github/workflows/coolify-integration.yml)
+is a deployment template. Configure the `COOLIFY_WEBHOOK_URL` secret and,
+when required by the selected webhook, `COOLIFY_TOKEN`. It deploys the exact
+commit image tag after a successful `main` workflow and supports manually
+selecting an older `sha-<commit SHA>` tag for rollback.
+
 ## Container build metrics
 
 The separate `Container build` workflow builds the backend, frontend, and
