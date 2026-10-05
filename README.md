@@ -146,6 +146,8 @@ Pre-commit and pre-push checks are configured with Lefthook and include:
 - Secret scanning with Gitleaks.
 - Branch-name validation and dependency auditing.
 
+Time to complete quality checks is 30s
+
 ## Technical information
 
 ### Application stack
