@@ -14,11 +14,11 @@
 
 | Store | Role | Access layer | Key risk | Evidence |
 |-------|------|--------------|----------|----------|
-| PostgreSQL | Task persistence | Prisma Client | Local credentials use development defaults unless overridden | `to-do-list/backend/src/prisma/schema.prisma`, `.env.example`, `docker-compose.yml` |
+| PostgreSQL | Task persistence | Prisma Client | Credentials and allowed origins are supplied through `.env`; Compose has no database credential fallbacks | `to-do-list/backend/src/prisma/schema.prisma`, `.env.example`, `docker-compose.yml` |
 
 ### 3) Secrets and Credentials Handling
 
-- Credential sources: `.env.example` and Docker Compose environment variables for local development.
+- Credential sources: the uncommitted `.env` file for local/Compose runs and deployment secret configuration in production. `.env.example` is documentation only.
 - Hardcoding checks: no credentials were found; the backend defaults to port `3000` but accepts `PORT`.
 - Rotation or lifecycle notes: [TODO].
 
@@ -27,7 +27,7 @@
 - Retry/backoff behavior: none found.
 - Timeout policy: none found.
 - Circuit-breaker or fallback behavior: none found.
-- Local container startup applies the Prisma schema with `prisma db push` before starting the backend.
+- Container startup applies committed Prisma migrations with `prisma migrate deploy` before starting the backend.
 - PATCH maps caught update failures to HTTP 404; GET/POST database failures have no explicit handler.
 
 ### 5) Observability for Integrations
