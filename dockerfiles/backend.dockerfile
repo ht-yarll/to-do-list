@@ -44,4 +44,4 @@ RUN npx prisma generate --schema src/prisma/schema.prisma
 
 EXPOSE 3000
 
-CMD ["sh", "-c", "npm run db:push && npm run start"]
+CMD ["sh", "-c", "npm run db:migrate && npm run start"]
