@@ -8,6 +8,8 @@
     "postinstall": "prisma skills sync || exit 0",
     "dev": "ts-node src/index.ts",
     "build": "tsc",
+    "db:push": "prisma db push --skip-generate --schema src/prisma/schema.prisma",
+    "db:migrate": "prisma migrate deploy --schema src/prisma/schema.prisma",
     "start": "node dist/index.js",
     "prisma:generate": "prisma generate --schema src/prisma/schema.prisma"
   },
@@ -18,14 +20,15 @@
   "dependencies": {
     "@prisma/client": "^6.16.2",
     "cors": "^2.8.6",
-    "express": "^5.2.1"
+    "dotenv": "^16.6.1",
+    "express": "^5.2.1",
+    "prisma": "^6.19.3"
   },
   "devDependencies": {
     "@types/cors": "^2.8.19",
     "@types/express": "^5.0.6",
     "@types/node": "^26.6.4",
     "@types/supertest": "^6.0.3",
-    "prisma": "^6.19.3",
     "supertest": "^7.1.4",
     "ts-node": "^10.9.2",
     "typescript": "^5.9.3",

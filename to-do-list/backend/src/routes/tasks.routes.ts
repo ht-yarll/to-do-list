@@ -8,7 +8,7 @@ import {
 } from "../models/task.model";
 import { validateRequest } from "../models/request-validation";
 
-export type TaskDatabase = Pick<PrismaClient, "task">;
+export type TaskDatabase = Pick<PrismaClient, "task" | "$queryRaw">;
 
 export function createTasksRouter(prisma: TaskDatabase) {
   const router = Router();

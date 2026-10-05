@@ -47,7 +47,7 @@ Build and lint commands are [TODO].
 - Config sources: `package.json`, `to-do-list/backend/package.json`, `to-do-list/backend/tsconfig.json`, `to-do-list/backend/src/prisma/schema.prisma`, `.env.example`, and `docker-compose.yml`.
 - Required env vars: `DATABASE_URL` for Prisma; `POSTGRES_USER`, `POSTGRES_PASSWORD`, and `POSTGRES_DB` configure the local database. `PORT` is supplied by Compose but the current source still uses `3000` directly.
 - Deployment/runtime constraints: deployment target is local; Docker Compose provides PostgreSQL, backend, and an Nginx-served frontend on port `5173`.
-- Local database initialization: the backend image runs `prisma db push` before starting the API; use migrations instead if this becomes a shared or production deployment.
+- Database initialization: the backend image runs `prisma migrate deploy` before starting the API. Schema changes must be committed under `to-do-list/backend/src/prisma/migrations/`.
 
 ### 6) Evidence
 

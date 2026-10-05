@@ -4,9 +4,9 @@ services:
       context: .
       dockerfile: dockerfiles/databank.dockerfile
     environment:
-      POSTGRES_USER: ${POSTGRES_USER:-todo}
-      POSTGRES_PASSWORD: ${POSTGRES_PASSWORD:-todo}
-      POSTGRES_DB: ${POSTGRES_DB:-todo}
+      POSTGRES_USER: ${POSTGRES_USER:?POSTGRES_USER must be set in .env}
+      POSTGRES_PASSWORD: ${POSTGRES_PASSWORD:?POSTGRES_PASSWORD must be set in .env}
+      POSTGRES_DB: ${POSTGRES_DB:?POSTGRES_DB must be set in .env}
     ports:
       - "5432:5432"
     volumes:
@@ -15,7 +15,7 @@ services:
       test:
         [
           "CMD-SHELL",
-          "pg_isready -U ${POSTGRES_USER:-todo} -d ${POSTGRES_DB:-todo}",
+          "pg_isready -U ${POSTGRES_USER:?POSTGRES_USER must be set in .env} -d ${POSTGRES_DB:?POSTGRES_DB must be set in .env}",
         ]
       interval: 5s
       timeout: 5s
@@ -27,8 +27,10 @@ services:
       context: .
       dockerfile: dockerfiles/backend.dockerfile
     environment:
-      DATABASE_URL: postgresql://${POSTGRES_USER:-todo}:${POSTGRES_PASSWORD:-todo}@database:5432/${POSTGRES_DB:-todo}?schema=public
-      PORT: 3000
+      DATABASE_URL: postgresql://${POSTGRES_USER:?POSTGRES_USER must be set in .env}:${POSTGRES_PASSWORD:?POSTGRES_PASSWORD must be set in .env}@database:5432/${POSTGRES_DB:?POSTGRES_DB must be set in .env}?schema=public
+      PORT: ${PORT:-3000}
+      NODE_ENV: ${NODE_ENV:-production}
+      CORS_ALLOWED_ORIGINS: ${CORS_ALLOWED_ORIGINS:?CORS_ALLOWED_ORIGINS must be set in .env}
     ports:
       - "3000:3000"
     depends_on:
@@ -55,6 +57,12 @@ services:
         VITE_API_URL: http://localhost:3000
     ports:
       - "5173:8080"
+    healthcheck:
+      test: ["CMD", "wget", "--spider", "--quiet", "http://127.0.0.1:8080/health"]
+      interval: 5s
+      timeout: 5s
+      retries: 10
+      start_period: 5s
     depends_on:
       backend:
         condition: service_healthy

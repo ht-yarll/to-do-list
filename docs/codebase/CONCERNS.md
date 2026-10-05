@@ -6,7 +6,7 @@
 
 | Severity | Concern | Evidence | Impact | Suggested action |
 |----------|---------|----------|--------|------------------|
-| medium | Local database credentials use development defaults | `.env.example`, `docker-compose.yml` | Unsafe if reused outside local development | Override credentials for any non-local environment |
+| medium | Database credentials are supplied through `.env` | `.env.example`, `docker-compose.yml` | Deployment fails if required values are missing | Keep `.env` out of version control and use a secret manager in production |
 | medium | No automated tests or CI | package manifests, scan output | Regressions are not detected | Add API/database tests and CI checks |
 
 ### 2) Technical Debt
@@ -21,7 +21,7 @@
 
 | Risk | OWASP category (if applicable) | Evidence | Current mitigation | Gap |
 |------|--------------------------------|----------|--------------------|-----|
-| All origins are allowed by default | A05 Security Misconfiguration | `to-do-list/backend/src/index.ts` | CORS middleware is enabled | Restrict allowed origins for deployed environments |
+| CORS origins are explicitly configured | A05 Security Misconfiguration | `to-do-list/backend/src/app.ts`, `.env.example` | Production refuses to start without `CORS_ALLOWED_ORIGINS` | Set only the deployed frontend origin(s) |
 | Minimal input validation | A03 Injection / data validation | `to-do-list/backend/src/index.ts` | Checks only truthiness of `title` | Validate type and length of `title` |
 | No authentication/authorization | N/A for current single-user scope | `to-do-list/backend/src/index.ts`, `README.md` | App is intended as a personal local tool | Revisit if multi-user access is added |
 
